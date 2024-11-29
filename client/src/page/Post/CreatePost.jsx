@@ -15,13 +15,13 @@ const CreatePost = () => {
         setSuccess('');
 
         try {
-            const response = await axios.post('http://localhost:3000/api/v1/user/createpost', { title, body }, {
+            const response = await axios.post('https://vrv-security-rbac-task-round.vercel.app//api/v1/user/createpost', { title, body }, {
 
                 withCredentials: true
             });
             // console.log('Post created:', response.data);
             setSuccess(response.data.message);
-            if(response.data.message === "ask admin to give you permission to post"){
+            if (response.data.message === "ask admin to give you permission to post") {
                 throw new Error('ask admin to give you permission to post');
             }
             setTitle('');

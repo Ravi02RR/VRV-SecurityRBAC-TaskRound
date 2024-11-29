@@ -24,7 +24,7 @@ const AdminDashboard = () => {
     const fetchUsers = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('http://localhost:3000/api/v1/admin/getallusers', { withCredentials: true });
+            const response = await axios.get('https://vrv-security-rbac-task-round.vercel.app//api/v1/admin/getallusers', { withCredentials: true });
             setUsers(response.data.users);
             setFilteredUsers(response.data.users);
             setLoading(false);
@@ -37,7 +37,7 @@ const AdminDashboard = () => {
     const toggleUserPostPermission = async (userId, currentPostStatus) => {
         try {
             await axios.put(
-                `http://localhost:3000/api/v1/admin/updateUserState?userid=${userId}`,
+                `https://vrv-security-rbac-task-round.vercel.app//api/v1/admin/updateUserState?userid=${userId}`,
                 { canPost: !currentPostStatus },
                 { withCredentials: true }
             );
@@ -49,7 +49,7 @@ const AdminDashboard = () => {
 
     const deleteUser = async (userId) => {
         try {
-            await axios.delete(`http://localhost:3000/api/v1/admin/deleteuser?userId=${userId}`, { withCredentials: true });
+            await axios.delete(`https://vrv-security-rbac-task-round.vercel.app//api/v1/admin/deleteuser?userId=${userId}`, { withCredentials: true });
             fetchUsers();
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to delete user');

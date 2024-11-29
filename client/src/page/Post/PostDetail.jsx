@@ -1,13 +1,13 @@
 import { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { 
-    ArrowLeft, 
-    User, 
-    Calendar, 
-    Clock, 
-    Edit, 
-    Trash2 
+import {
+    ArrowLeft,
+    User,
+    Calendar,
+    Clock,
+    Edit,
+    Trash2
 } from "lucide-react";
 import { AuthContext } from "../../context/auth.context";
 
@@ -15,7 +15,7 @@ const PostDetail = () => {
     const { postId } = useParams();
     const navigate = useNavigate();
     const { userDetail, isAuthenticated } = useContext(AuthContext);
-    
+
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -23,10 +23,10 @@ const PostDetail = () => {
     const fetchPostDetail = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(`http://localhost:3000/posts/${postId}`,);
+            const response = await axios.get(`https://vrv-security-rbac-task-round.vercel.app//posts/${postId}`,);
             console.log(response.data.post);
 
-            
+
             setPost(response.data.post);
             setLoading(false);
         } catch (err) {
@@ -38,13 +38,13 @@ const PostDetail = () => {
 
     const handleDeletePost = async () => {
         try {
-            await axios.delete(`http://localhost:3000/api/v1/admin/deletepost?postId=${postId}`, {
+            await axios.delete(`https://vrv-security-rbac-task-round.vercel.app//api/v1/admin/deletepost?postId=${postId}`, {
                 withCredentials: true
             });
-            navigate('/'); 
+            navigate('/');
         } catch (err) {
             console.error("Failed to delete post", err);
-            
+
         }
     };
 
@@ -88,7 +88,7 @@ const PostDetail = () => {
             <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
                 <div className="p-8">
                     <div className="flex justify-between items-start mb-8">
-                        <button 
+                        <button
                             onClick={() => navigate(-1)}
                             className="text-gray-600 hover:text-blue-600 transition flex items-center"
                         >
@@ -127,8 +127,8 @@ const PostDetail = () => {
                             <Calendar size={16} />
                             <span>
                                 {new Date(post.createdAt).toLocaleDateString('en-US', {
-                                    year: 'numeric', 
-                                    month: 'long', 
+                                    year: 'numeric',
+                                    month: 'long',
                                     day: 'numeric'
                                 })}
                             </span>
@@ -137,7 +137,7 @@ const PostDetail = () => {
                             <Clock size={16} />
                             <span>
                                 {new Date(post.createdAt).toLocaleTimeString('en-US', {
-                                    hour: '2-digit', 
+                                    hour: '2-digit',
                                     minute: '2-digit'
                                 })}
                             </span>

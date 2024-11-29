@@ -12,7 +12,7 @@ const Navbar = () => {
     const handleLogout = async () => {
         try {
             const res = await axios.post(
-                'http://localhost:3000/logout',
+                'https://vrv-security-rbac-task-round.vercel.app//logout',
                 {},
                 {
                     headers: {
@@ -56,7 +56,7 @@ const Navbar = () => {
                 </Link>
             )}
 
-            
+
             {userDetail && userDetail.role !== 'admin' && (
                 <Link
                     to="/create-post"

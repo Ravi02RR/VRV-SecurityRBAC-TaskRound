@@ -21,7 +21,7 @@ const CreatePost = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post('https://vrv-securityrbac-taskround.onrender.com/api/v1/user/createpost',
+            const response = await axios.post('http://localhost:3000/api/v1/user/createpost',
                 { title, body },
                 { withCredentials: true }
             );

@@ -41,7 +41,7 @@ const Home = () => {
     const fetchPosts = async () => {
         try {
             setLoading(true);
-            const res = await axios.get("https://vrv-securityrbac-taskround.onrender.com/api/v1/user/allpost", {
+            const res = await axios.get("http://localhost:3000/api/v1/user/allpost", {
                 withCredentials: true
             });
 

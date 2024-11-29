@@ -24,7 +24,7 @@ const AdminDashboard = () => {
     const fetchUsers = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('https://vrv-securityrbac-taskround.onrender.com/api/v1/admin/getallusers', { withCredentials: true });
+            const response = await axios.get('http://localhost:3000/api/v1/admin/getallusers', { withCredentials: true });
             setUsers(response.data.users);
             setFilteredUsers(response.data.users);
             setLoading(false);
@@ -37,7 +37,7 @@ const AdminDashboard = () => {
     const toggleUserPostPermission = async (userId, currentPostStatus) => {
         try {
             await axios.put(
-                `https://vrv-securityrbac-taskround.onrender.com/api/v1/admin/updateUserState?userid=${userId}`,
+                `http://localhost:3000/api/v1/admin/updateUserState?userid=${userId}`,
                 { canPost: !currentPostStatus },
                 { withCredentials: true }
             );
@@ -49,7 +49,7 @@ const AdminDashboard = () => {
 
     const deleteUser = async (userId) => {
         try {
-            await axios.delete(`https://vrv-securityrbac-taskround.onrender.com/api/v1/admin/deleteuser?userId=${userId}`, { withCredentials: true });
+            await axios.delete(`http://localhost:3000/api/v1/admin/deleteuser?userId=${userId}`, { withCredentials: true });
             fetchUsers();
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to delete user');
@@ -115,7 +115,7 @@ const AdminDashboard = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-4 md:p-8">
+        <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-4 md:p-8 mt-10">
             <div className="container mx-auto">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-8">
                     <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-0">Admin Dashboard</h1>

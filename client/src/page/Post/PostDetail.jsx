@@ -59,7 +59,7 @@ const PostDetail = () => {
     const fetchPostDetail = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(`https://vrv-securityrbac-taskround.onrender.com/posts/${postId}`);
+            const response = await axios.get(`http://localhost:3000/posts/${postId}`);
             setPost(response.data.post);
             setLoading(false);
         } catch (err) {
@@ -71,7 +71,7 @@ const PostDetail = () => {
 
     const handleDeletePost = async () => {
         try {
-            await axios.delete(`https://vrv-securityrbac-taskround.onrender.com/api/v1/admin/deletepost?postId=${postId}`, {
+            await axios.delete(`http://localhost:3000/api/v1/admin/deletepost?postId=${postId}`, {
                 withCredentials: true
             });
             navigate('/');

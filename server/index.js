@@ -20,7 +20,7 @@ app.use(errorHandeller);
 
 // CORS setup with options
 app.use(cors({
-  origin: 'https://vrv-securityrbac-taskround.onrender.com',
+  origin: ['https://vrv-securityrbac-taskround.onrender.com', 'http://localhost:5173'],
   credentials: true,
 }));
 

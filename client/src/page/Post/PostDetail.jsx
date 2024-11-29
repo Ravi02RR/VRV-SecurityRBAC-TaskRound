@@ -11,6 +11,42 @@ import {
 } from "lucide-react";
 import { AuthContext } from "../../context/auth.context";
 
+const PostDetailSkeleton = () => (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8 mt-10">
+        <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden animate-pulse">
+            <div className="p-8">
+                <div className="flex justify-between mb-8">
+                    <div className="h-8 w-24 bg-gray-300 rounded"></div>
+                    <div className="flex space-x-4">
+                        <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
+                        <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
+                    </div>
+                </div>
+
+                <div className="space-y-4 mb-6">
+                    <div className="h-12 bg-gray-300 rounded w-3/4"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                </div>
+
+                <div className="flex space-x-6 mb-6">
+                    {[1, 2, 3].map((_, index) => (
+                        <div key={index} className="flex items-center space-x-2">
+                            <div className="h-5 w-5 bg-gray-300 rounded-full"></div>
+                            <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="space-y-4">
+                    {[1, 2, 3, 4].map((_, index) => (
+                        <div key={index} className="h-4 bg-gray-200 rounded"></div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
 const PostDetail = () => {
     const { postId } = useParams();
     const navigate = useNavigate();
@@ -23,10 +59,7 @@ const PostDetail = () => {
     const fetchPostDetail = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(`https://vrv-security-rbac-task-round.vercel.app/posts/${postId}`,);
-            console.log(response.data.post);
-
-
+            const response = await axios.get(`http://localhost:3000/posts/${postId}`);
             setPost(response.data.post);
             setLoading(false);
         } catch (err) {
@@ -38,13 +71,12 @@ const PostDetail = () => {
 
     const handleDeletePost = async () => {
         try {
-            await axios.delete(`https://vrv-security-rbac-task-round.vercel.app/api/v1/admin/deletepost?postId=${postId}`, {
+            await axios.delete(`http://localhost:3000/api/v1/admin/deletepost?postId=${postId}`, {
                 withCredentials: true
             });
             navigate('/');
         } catch (err) {
             console.error("Failed to delete post", err);
-
         }
     };
 
@@ -52,24 +84,11 @@ const PostDetail = () => {
         fetchPostDetail();
     }, [postId]);
 
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-pulse">
-                        <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 01-4.144-4.145l-.474-2.391a2 2 0 00-1.416-1.462l-1.454-.361a2 2 0 01-1.517-1.916l.02-1.455a2 2 0 00-1.15-1.86l-1.295-.654a2 2 0 01-1.12-1.836l.025-1.608a2 2 0 00-.956-1.764L4.9 6.601a2.002 2.002 0 00-.807 1.676l.038 1.258a2 2 0 01-1.3 1.88l-1.718.68a2 2 0 00-1.24 1.657l.07 1.677a2 2 0 001.065 1.722l1.574.838a2 2 0 011.117 1.667l.07 1.626a2 2 0 001.178 1.765l1.7.773a2 2 0 011.336 1.674l.065 1.59a2 2 0 001.247 1.794l1.56.78a2 2 0 002.08-.435l1.196-1.196a2 2 0 011.122-.538l2.394-.479a6 6 0 004.117-4.125l.46-2.363a2 2 0 011.478-1.533l1.69-.425a2 2 0 001.52-1.927V10a2 2 0 00-2-2 2 2 0 01-2-2V6a2 2 0 00-2-2" />
-                        </svg>
-                    </div>
-                    <p className="mt-4 text-gray-600 text-lg">Loading post details...</p>
-                </div>
-            </div>
-        );
-    }
+    if (loading) return <PostDetailSkeleton />;
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center  ">
                 <div className="bg-white p-8 rounded-xl shadow-2xl text-center">
                     <div className="text-red-500 mb-4">{error}</div>
                     <button
@@ -84,7 +103,7 @@ const PostDetail = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8 mt-10">
             <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
                 <div className="p-8">
                     <div className="flex justify-between items-start mb-8">

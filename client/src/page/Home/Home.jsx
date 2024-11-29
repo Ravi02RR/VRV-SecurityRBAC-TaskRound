@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -7,9 +6,29 @@ import {
     User,
     ArrowRight,
     Search,
-    Trash2
+    Trash2,
+
 } from "lucide-react";
 import { AuthContext } from "../../context/auth.context";
+
+const PostSkeleton = () => (
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden animate-pulse">
+        <div className="p-6">
+            <div className="h-6 bg-gray-300 rounded w-3/4 mb-3"></div>
+            <div className="space-y-2">
+                <div className="h-4 bg-gray-300 rounded w-full"></div>
+                <div className="h-4 bg-gray-300 rounded w-5/6"></div>
+                <div className="h-4 bg-gray-300 rounded w-4/5"></div>
+            </div>
+            <div className="flex items-center justify-between mt-4">
+                <div className="flex items-center space-x-2">
+                    <div className="h-4 w-4 bg-gray-300 rounded-full"></div>
+                    <div className="h-4 bg-gray-300 rounded w-20"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+);
 
 const Home = () => {
     const navigate = useNavigate();
@@ -22,7 +41,7 @@ const Home = () => {
     const fetchPosts = async () => {
         try {
             setLoading(true);
-            const res = await axios.get("https://vrv-security-rbac-task-round.vercel.app/api/v1/user/allpost", {
+            const res = await axios.get("http://localhost:3000/api/v1/user/allpost", {
                 withCredentials: true
             });
 
@@ -41,8 +60,7 @@ const Home = () => {
 
     const handleDeletePost = async (postId) => {
         try {
-
-            await axios.delete(`https://vrv-security-rbac-task-round.vercel.app/api/v1/admin/deletepost?postId=${postId}`, {
+            await axios.delete(`http://localhost:3000/api/v1/admin/deletepost?postId=${postId}`, {
                 withCredentials: true
             });
 
@@ -51,7 +69,6 @@ const Home = () => {
             console.error("Failed to delete post", err);
         }
     };
-
 
     useEffect(() => {
         fetchPosts();
@@ -62,11 +79,9 @@ const Home = () => {
         post.body.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-
-
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto mt-10">
                 <header className="mb-12 text-center">
                     <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
                         Latest Posts
@@ -92,7 +107,20 @@ const Home = () => {
                     </div>
                 </header>
 
-                {filteredPosts.length === 0 ? (
+                {loading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[...Array(6)].map((_, index) => (
+                            <PostSkeleton key={index} />
+                        ))}
+                    </div>
+                ) : error ? (
+                    <div className="text-center py-12">
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                            <strong className="font-bold">Oops! </strong>
+                            <span className="block sm:inline">{error}</span>
+                        </div>
+                    </div>
+                ) : filteredPosts.length === 0 ? (
                     <div className="text-center py-12">
                         <BookOpen className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                         <p className="text-xl text-gray-500">No posts found</p>
@@ -102,10 +130,10 @@ const Home = () => {
                         {filteredPosts.map((post) => (
                             <div
                                 key={post._id}
-                                className="bg-white rounded-xl shadow-lg overflow-hidden transition duration-300 transform hover:-translate-y-2 hover:shadow-2xl"
+                                className="bg-white rounded-xl shadow-lg overflow-hidden transition duration-300 transform hover:-translate-y-2 hover:shadow-2xl group"
                             >
                                 <div className="p-6">
-                                    <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                                    <h2 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition">
                                         {post.title}
                                     </h2>
                                     <p className="text-gray-600 mb-4 line-clamp-3">
@@ -121,15 +149,15 @@ const Home = () => {
                                         <div className="flex items-center space-x-2">
                                             <button
                                                 onClick={() => navigate(`/post/${post._id}`)}
-                                                className="flex items-center text-blue-600 hover:text-blue-800 transition"
+                                                className="flex items-center text-blue-600 hover:text-blue-800 transition group"
                                             >
                                                 Read More
-                                                <ArrowRight className="ml-2" size={16} />
+                                                <ArrowRight className="ml-2 group-hover:translate-x-1 transition" size={16} />
                                             </button>
                                             {isAuthenticated && userDetail?.role === 'admin' && (
                                                 <button
                                                     onClick={() => handleDeletePost(post._id)}
-                                                    className="text-red-500 hover:text-red-700 transition"
+                                                    className="text-red-500 hover:text-red-700 transition hover:scale-110"
                                                     title="Delete Post"
                                                 >
                                                     <Trash2 size={16} />

@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import { User, Shield, Copy } from 'lucide-react';
+import { User, Shield, Copy, Loader2 } from 'lucide-react';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/auth.context';
 import { useNavigate } from 'react-router-dom';
@@ -12,16 +12,24 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [isAdmin, setIsAdmin] = useState(false);
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        inputRef.current.focus()
+    }, [])
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
+        setLoading(true);
 
         try {
             const endpoint = isAdmin
-                ? 'https://vrv-security-rbac-task-round.vercel.app/api/v1/admin/signin'
-                : 'https://vrv-security-rbac-task-round.vercel.app/api/v1/user/signin';
+                ? 'http://localhost:3000/api/v1/admin/signin'
+                : 'http://localhost:3000/api/v1/user/signin';
 
             const response = await axios.post(endpoint, {
                 email,
@@ -42,6 +50,8 @@ const Login = () => {
 
         } catch (err) {
             setError(err.response?.data?.message || 'Login failed');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -113,6 +123,7 @@ const Login = () => {
                                 </label>
                                 <div className="relative">
                                     <input
+                                        ref={inputRef}
                                         type="email"
                                         id="email"
                                         value={email}
@@ -172,9 +183,17 @@ const Login = () => {
 
                             <button
                                 type="submit"
-                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300"
+                                disabled={loading}
+                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {isAdmin ? 'Admin Sign In' : 'User Sign In'}
+                                {loading ? (
+                                    <>
+                                        <Loader2 className="mr-2 animate-spin" size={20} />
+                                        {isAdmin ? 'Signing In...' : 'Signing In...'}
+                                    </>
+                                ) : (
+                                    isAdmin ? 'Admin Sign In' : 'User Sign In'
+                                )}
                             </button>
                         </form>
                     </div>

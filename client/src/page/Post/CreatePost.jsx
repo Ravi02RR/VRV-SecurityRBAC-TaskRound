@@ -11,7 +11,7 @@ const CreatePost = () => {
     const inputRef = useRef(null);
 
     useEffect(() => {
-        inputRef.current.focus();   
+        inputRef.current.focus();
     }, [])
 
     const handleSubmit = async (e) => {
@@ -21,7 +21,7 @@ const CreatePost = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post('http://localhost:3000/api/v1/user/createpost',
+            const response = await axios.post('https://vrv-security-rbac-task-round.vercel.app/api/v1/user/createpost',
                 { title, body },
                 { withCredentials: true }
             );

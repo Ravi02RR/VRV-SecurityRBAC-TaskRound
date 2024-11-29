@@ -19,7 +19,7 @@ app.use(errorHandeller);
 
 //cors setup with options
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://vrvtaskfrontend.vercel.app',
     credentials: true,
 }));
 

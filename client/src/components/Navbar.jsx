@@ -18,7 +18,7 @@ const Navbar = () => {
         setIsLoading(true);
         try {
             await axios.post(
-                'http://localhost:3000/logout',
+                'https://vrv-security-rbac-task-round.vercel.app/logout',
                 {},
                 {
                     headers: { 'Content-Type': 'application/json' },
@@ -111,7 +111,7 @@ const Navbar = () => {
                         to="/"
                         className="text-2xl font-bold  text-blue-600  hover:scale-105 transition-transform"
                     >
-                        VRV 
+                        VRV
                     </Link>
 
                     <div className="hidden md:flex space-x-2 items-center">

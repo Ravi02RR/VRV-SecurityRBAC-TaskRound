@@ -12,7 +12,7 @@ const Navbar = () => {
     const handleLogout = async () => {
         try {
             const res = await axios.post(
-                'https://vrv-security-rbac-task-round.vercel.app//logout',
+                'https://vrv-security-rbac-task-round.vercel.app/logout',
                 {},
                 {
                     headers: {

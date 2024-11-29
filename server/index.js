@@ -19,7 +19,7 @@ app.use(errorHandeller);
 
 
 app.use(cors({
-    origin: 'https://vrvtaskfrontend.vercel.app',
+    origin: '*',
     credentials: true,
 }));
 

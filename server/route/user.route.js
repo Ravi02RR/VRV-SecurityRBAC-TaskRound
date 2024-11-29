@@ -75,9 +75,10 @@ userRoute.post('/signin', async (req, res) => {
 
         res.cookie('token', token, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'lax',
-            maxAge: 3600000
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+            maxAge: 3600000,
+            path: '/',
         }).status(200).json({
             message: 'User logged in successfully',
             user: {
@@ -130,7 +131,7 @@ userRoute.post('/createpost', userAuthmiddleware, async (req, res) => {
 
 userRoute.get('/allpost', async (req, res) => {
     try {
-        const posts = await postModel.find().populate('user', 'name'); 
+        const posts = await postModel.find().populate('user', 'name');
         // console.log(posts);
         res.status(200).json({
             message: 'All posts',

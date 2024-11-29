@@ -86,8 +86,9 @@ adminRoute.post('/signin', async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 3600000
+            sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+            maxAge: 3600000,
+            path: '/',
         }).status(200).json({
             message: 'Admin logged in successfully',
             admin: {
@@ -98,6 +99,7 @@ adminRoute.post('/signin', async (req, res) => {
             },
             token
         });
+
     } catch (err) {
         console.error('Admin signin error:', err);
         res.status(500).json({ message: 'Server error during admin signin' });

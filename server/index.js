@@ -35,7 +35,7 @@ app.use('/api/v1/admin', adminRoute);
 
 // Backend health route
 app.get('/', (req, res) => {
-  res.send('i am fine');
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 app.post('/logout', (req, res) => {

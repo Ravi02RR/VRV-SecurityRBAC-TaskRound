@@ -4,7 +4,8 @@ const connectToDataBase = require('./db/db');
 const cookieParser = require('cookie-parser');
 const errorHandeller = require('./middleware/errorhandeler');
 const postModel = require('./models/post.model');
-const cors = require('cors')
+const cors = require('cors');
+const path = require('path');
 
 const app = express();
 
@@ -17,12 +18,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(errorHandeller);
 
-//cors setup with options
+// CORS setup with options
 app.use(cors({
-    origin: 'https://vrvtaskfrontend.vercel.app',
-    credentials: true,
+  origin: 'http://localhost:5173',
+  credentials: true,
 }));
 
+// Serve static files from the dist folder
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // Routes
 const userRoute = require('./route/user.route');
@@ -30,37 +33,42 @@ const adminRoute = require('./route/admin.route');
 app.use('/api/v1/user', userRoute);
 app.use('/api/v1/admin', adminRoute);
 
-// backend health route
+// Backend health route
 app.get('/', (req, res) => {
-    res.send('i am fine');
+  res.send('i am fine');
 });
 
 app.post('/logout', (req, res) => {
-    res.clearCookie('token').send('Logged out');
+  res.clearCookie('token').send('Logged out');
 });
 
 app.get('/posts/:postid', async (req, res) => {
-    try {
-        const post = await postModel.findById(req.params.postid).populate('user', 'name');
-        if (!post) {
-            return res.status(404).json({ message: 'Post not found' });
-        }
-        res.status(200).json({ post });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+  try {
+    const post = await postModel.findById(req.params.postid).populate('user', 'name');
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
     }
-
+    res.status(200).json({ post });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
+
+// Catch-all route for serving the index.html file for client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
 // Start the server
 async function startServer() {
-    try {
-        await connectToDataBase(process.env.MONGOURI);
-        app.listen(process.env.PORT, () => {
-            console.log(`Server is running on http://localhost:${process.env.PORT}`);
-        });
-    } catch (err) {
-        console.error('Error starting the server:', err);
-    }
+  try {
+    await connectToDataBase(process.env.MONGOURI);
+    app.listen(process.env.PORT, () => {
+      console.log(`Server is running on http://localhost:${process.env.PORT}`);
+    });
+  } catch (err) {
+    console.error('Error starting the server:', err);
+  }
 }
 
 startServer();

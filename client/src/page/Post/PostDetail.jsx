@@ -23,7 +23,7 @@ const PostDetail = () => {
     const fetchPostDetail = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(`https://vrv-security-rbac-task-round.vercel.app//posts/${postId}`,);
+            const response = await axios.get(`https://vrv-security-rbac-task-round.vercel.app/posts/${postId}`,);
             console.log(response.data.post);
 
 
@@ -38,7 +38,7 @@ const PostDetail = () => {
 
     const handleDeletePost = async () => {
         try {
-            await axios.delete(`https://vrv-security-rbac-task-round.vercel.app//api/v1/admin/deletepost?postId=${postId}`, {
+            await axios.delete(`https://vrv-security-rbac-task-round.vercel.app/api/v1/admin/deletepost?postId=${postId}`, {
                 withCredentials: true
             });
             navigate('/');

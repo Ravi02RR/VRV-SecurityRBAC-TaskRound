@@ -8,15 +8,15 @@ async function userAuthmiddleware(req, res, next) {
         const token = req.cookies['token'];
         // console.log(token);
         if (!token) {
-            throw new Error('User not authenticated');
+            throw new Error('User not authenticated', token);
         }
         const decoded = jwt.verify(token, process.env.USER_JWT);
         if (!decoded) {
-            throw new Error('User not authenticated');
+            throw new Error('User not authenticated', decoded);
         }
         const user = await userModel.findById(decoded.id);
         if (!user) {
-            throw new Error('User not authenticated');
+            throw new Error('User not authenticated' + decoded.id);
         }
         req.userId = decoded.id;
         req.canPost = user.canPost;

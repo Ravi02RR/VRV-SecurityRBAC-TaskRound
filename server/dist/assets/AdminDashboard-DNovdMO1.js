@@ -181,7 +181,7 @@ import { T as b } from "./trash-2-Bbf5WKSm.js";
           })
         : e.jsx("div", {
             className:
-              "min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-4 md:p-8 mt-10",
+              "min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-4 md:p-8 mt-20",
             children: e.jsxs("div", {
               className: "container mx-auto",
               children: [

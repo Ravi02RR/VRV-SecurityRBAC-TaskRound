@@ -24,8 +24,8 @@ const Signup = () => {
 
         try {
             const endpoint = isAdmin
-                ? 'https://vrv-security-rbac-task-round.vercel.app/api/v1/admin/signup'
-                : 'https://vrv-security-rbac-task-round.vercel.app/api/v1/user/signup';
+                ? 'https://vrv-securityrbac-taskround.onrender.com/api/v1/admin/signup'
+                : 'https://vrv-securityrbac-taskround.onrender.com/api/v1/user/signup';
 
             const response = await axios.post(endpoint, {
                 name,

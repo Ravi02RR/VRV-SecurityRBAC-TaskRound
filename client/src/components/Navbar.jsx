@@ -18,7 +18,7 @@ const Navbar = () => {
         setIsLoading(true);
         try {
             await axios.post(
-                'https://vrv-security-rbac-task-round.vercel.app/logout',
+                'https://vrv-securityrbac-taskround.onrender.com/logout',
                 {},
                 {
                     headers: { 'Content-Type': 'application/json' },

@@ -29,13 +29,19 @@ _Caption: login screen tap quick login credential icons to use defalut password_
 _Caption: Admin role have delete button_
 
 ![Screenshot 3](image3.png)  
-_Caption: Admin can change user can post or not_
+\_Caption: Admin can change user can post or not or can login or not
 
 ![Screenshot 4](image4.png)  
 _Caption: user without admin permit cannot post anything_
 
 ![Screenshot 5](image5.png)  
 _Caption: user can post if admin grant access_
+
+![Screenshot 6](image6.png)  
+\_Caption: admin can create user
+
+![Screenshot 6](image7.png)  
+\_Caption: Blocked user cannot login
 
 ## Getting Started
 

@@ -130,4 +130,4 @@ Backend: https://vrv-securityrbac-taskround.onrender.com
 
 The application is deployed at the following link:
 
-[VRV Security RBAC Task Round - Deployment](https://vrv-securityrbac-taskround.onrender.com/)
+[VRV Security RBAC Task Round - AWS Deployment](https://vrvtask.devguy.live/)

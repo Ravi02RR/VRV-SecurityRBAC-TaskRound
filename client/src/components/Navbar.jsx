@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     User, LogIn, LogOut, Menu, X, PlusCircle, Loader2,
-    Home, ShieldCheck, UserPlus
+    Home, ShieldCheck, UserPlus, UserPlus as CreateUserIcon
 } from 'lucide-react';
 import { AuthContext } from '../context/auth.context';
 import axios from 'axios';
@@ -56,7 +56,10 @@ const Navbar = () => {
                 {[
                     { to: '/', label: 'Home', icon: Home },
                     ...(userDetail?.role === 'admin'
-                        ? [{ to: '/admin-dashboard', label: 'Dashboard', icon: ShieldCheck }]
+                        ? [
+                            { to: '/admin-dashboard', label: 'Dashboard', icon: ShieldCheck },
+                            { to: '/create-user', label: 'Create User', icon: CreateUserIcon }
+                        ]
                         : []),
                     ...(userDetail
                         ? [

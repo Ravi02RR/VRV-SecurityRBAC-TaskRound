@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { Trash2, Lock, Unlock, Search, } from 'lucide-react';
 import { AuthContext } from '../../context/auth.context';
 import { useNavigate } from 'react-router-dom';
+
 
 const AdminDashboard = () => {
     const [users, setUsers] = useState([]);
@@ -11,9 +13,9 @@ const AdminDashboard = () => {
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
+    const [stats, setStats] = useState({ totalUsers: 0, totalPosts: 0 });
     const { userDetail } = useContext(AuthContext);
     const navigate = useNavigate();
-
 
     useEffect(() => {
         if (!userDetail || userDetail.role !== 'admin') {
@@ -24,7 +26,7 @@ const AdminDashboard = () => {
     const fetchUsers = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('http://localhost:3000/api/v1/admin/getallusers', { withCredentials: true });
+            const response = await axios.get('https://vrv-securityrbac-taskround.onrender.com/api/v1/admin/getallusers', { withCredentials: true });
             setUsers(response.data.users);
             setFilteredUsers(response.data.users);
             setLoading(false);
@@ -34,39 +36,64 @@ const AdminDashboard = () => {
         }
     };
 
-    const toggleUserPostPermission = async (userId, currentPostStatus) => {
+    const fetchStats = async () => {
+        try {
+            const response = await axios.get('https://vrv-securityrbac-taskround.onrender.com/api/v1/admin/getstats', { withCredentials: true });
+            setStats(response.data.stats);
+        } catch (err) {
+            console.error('Failed to fetch stats', err);
+        }
+    };
+
+
+
+    const togglePostPermission = async (userId, currentPostStatus) => {
         try {
             await axios.put(
-                `http://localhost:3000/api/v1/admin/updateUserState?userid=${userId}`,
+                `https://vrv-securityrbac-taskround.onrender.com/api/v1/admin/updateUserState?userid=${userId}`,
                 { canPost: !currentPostStatus },
                 { withCredentials: true }
             );
             fetchUsers();
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to update user state');
+            setError(err.response?.data?.message || 'Failed to update post permission');
+        }
+    };
+
+    const toggleLoginBlock = async (userId, currentBlockStatus) => {
+        try {
+            await axios.put(
+                `https://vrv-securityrbac-taskround.onrender.com/api/v1/admin/blockuser?userId=${userId}`,
+                {},
+                { withCredentials: true }
+            );
+            fetchUsers();
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to toggle user block status');
         }
     };
 
     const deleteUser = async (userId) => {
         try {
-            await axios.delete(`http://localhost:3000/api/v1/admin/deleteuser?userId=${userId}`, { withCredentials: true });
+            await axios.delete(`https://vrv-securityrbac-taskround.onrender.com/api/v1/admin/deleteuser?userId=${userId}`, { withCredentials: true });
             fetchUsers();
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to delete user');
         }
     };
 
-
     useEffect(() => {
         let result = users;
 
-
         if (filterStatus !== 'all') {
-            result = result.filter(user =>
-                filterStatus === 'allowed' ? user.canPost : !user.canPost
-            );
+            result = result.filter(user => {
+                if (filterStatus === 'allowed')
+                    return user.canPost && !user.isBlocked;
+                if (filterStatus === 'blocked')
+                    return !user.canPost || user.isBlocked;
+                return true;
+            });
         }
-
 
         if (searchTerm) {
             result = result.filter(user =>
@@ -81,6 +108,7 @@ const AdminDashboard = () => {
     useEffect(() => {
         if (userDetail && userDetail.role === 'admin') {
             fetchUsers();
+            fetchStats();
         }
     }, [userDetail]);
 
@@ -115,8 +143,20 @@ const AdminDashboard = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-4 md:p-8 mt-10">
+        <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-4 md:p-8 mt-16">
             <div className="container mx-auto">
+                {/* Stats Section */}
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                    <div className="bg-white p-4 rounded-lg shadow">
+                        <h2 className="text-lg font-semibold text-gray-700">Total Users</h2>
+                        <p className="text-2xl font-bold text-blue-600">{stats.totalUsers}</p>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg shadow">
+                        <h2 className="text-lg font-semibold text-gray-700">Total Posts</h2>
+                        <p className="text-2xl font-bold text-green-600">{stats.totalPosts}</p>
+                    </div>
+                </div>
+
                 <div className="flex flex-col md:flex-row justify-between items-center mb-8">
                     <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-0">Admin Dashboard</h1>
 
@@ -137,7 +177,7 @@ const AdminDashboard = () => {
                             className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                             <option value="all">All Users</option>
-                            <option value="allowed">Allowed</option>
+                            <option value="allowed">Active</option>
                             <option value="blocked">Blocked</option>
                         </select>
                     </div>
@@ -161,15 +201,26 @@ const AdminDashboard = () => {
                                         <div className="text-sm text-gray-500">{user.email}</div>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                        <button
-                                            onClick={() => toggleUserPostPermission(user._id, user.canPost)}
-                                            className={`px-2 py-1 rounded-full text-xs flex items-center ${user.canPost
-                                                ? 'bg-green-500 text-white'
-                                                : 'bg-red-500 text-white'
-                                                }`}
-                                        >
-                                            {user.canPost ? 'Allowed' : 'Blocked'}
-                                        </button>
+                                        <div className="flex flex-col space-y-2">
+                                            <button
+                                                onClick={() => togglePostPermission(user._id, user.canPost)}
+                                                className={`px-2 py-1 rounded-full text-xs flex items-center ${user.canPost
+                                                    ? 'bg-green-500 text-white'
+                                                    : 'bg-red-500 text-white'
+                                                    }`}
+                                            >
+                                                {user.canPost ? 'Can Post' : 'Cannot Post'}
+                                            </button>
+                                            <button
+                                                onClick={() => toggleLoginBlock(user._id, user.isBlocked)}
+                                                className={`px-2 py-1 rounded-full text-xs flex items-center ${user.isBlocked
+                                                    ? 'bg-red-500 text-white'
+                                                    : 'bg-green-500 text-white'
+                                                    }`}
+                                            >
+                                                {user.isBlocked ? 'Blocked Login' : 'Login Active'}
+                                            </button>
+                                        </div>
                                         <button
                                             onClick={() => deleteUser(user._id)}
                                             className="text-red-500 hover:text-red-700"
@@ -183,13 +234,13 @@ const AdminDashboard = () => {
                         )}
                     </div>
 
-
                     <table className="w-full hidden md:table">
                         <thead className="bg-gray-200">
                             <tr>
                                 <th className="px-4 py-3 text-left">Name</th>
                                 <th className="px-4 py-3 text-left">Email</th>
                                 <th className="px-4 py-3 text-center">Post Permission</th>
+                                <th className="px-4 py-3 text-center">Login Status</th>
                                 <th className="px-4 py-3 text-center">Actions</th>
                             </tr>
                         </thead>
@@ -200,18 +251,24 @@ const AdminDashboard = () => {
                                     <td className="px-4 py-3">{user.email}</td>
                                     <td className="px-4 py-3 text-center">
                                         <button
-                                            onClick={() => toggleUserPostPermission(user._id, user.canPost)}
+                                            onClick={() => togglePostPermission(user._id, user.canPost)}
                                             className={`px-3 py-1 rounded-full text-sm flex items-center justify-center mx-auto ${user.canPost
                                                 ? 'bg-green-500 text-white'
                                                 : 'bg-red-500 text-white'
                                                 }`}
                                         >
-                                            {user.canPost ? (
-                                                <Unlock size={16} className="mr-1" />
-                                            ) : (
-                                                <Lock size={16} className="mr-1" />
-                                            )}
-                                            {user.canPost ? 'Allowed' : 'Blocked'}
+                                            {user.canPost ? 'Can Post' : 'Cannot Post'}
+                                        </button>
+                                    </td>
+                                    <td className="px-4 py-3 text-center">
+                                        <button
+                                            onClick={() => toggleLoginBlock(user._id, user.isBlocked)}
+                                            className={`px-3 py-1 rounded-full text-sm flex items-center justify-center mx-auto ${user.isBlocked
+                                                ? 'bg-red-500 text-white'
+                                                : 'bg-green-500 text-white'
+                                                }`}
+                                        >
+                                            {user.isBlocked ? 'Blocked Login' : 'Login Active'}
                                         </button>
                                     </td>
                                     <td className="px-4 py-3 text-center">
@@ -237,6 +294,8 @@ const AdminDashboard = () => {
                     )}
                 </div>
             </div>
+
+
         </div>
     );
 };

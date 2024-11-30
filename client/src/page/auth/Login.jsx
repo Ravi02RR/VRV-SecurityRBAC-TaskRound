@@ -28,8 +28,8 @@ const Login = () => {
 
         try {
             const endpoint = isAdmin
-                ? 'http://localhost:3000/api/v1/admin/signin'
-                : 'http://localhost:3000/api/v1/user/signin';
+                ? 'https://vrv-securityrbac-taskround.onrender.com/api/v1/admin/signin'
+                : 'https://vrv-securityrbac-taskround.onrender.com/api/v1/user/signin';
 
             const response = await axios.post(endpoint, {
                 email,

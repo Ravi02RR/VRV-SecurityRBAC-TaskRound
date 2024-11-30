@@ -135,7 +135,34 @@ adminRoute.put('/updateUserState', adminAuthmiddleware, async (req, res) => {
         res.status(500).json({ message: 'Server error updating user state' });
     }
 });
+adminRoute.put('/blockuser', adminAuthmiddleware, async (req, res) => {
+    try {
+        const userId = req.query.userId;
 
+        if (!userId) {
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+
+        const user
+            = await userModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        const isBlocked = !user.isBlocked;
+        user.isBlocked = isBlocked;
+        await user.save();
+        res.json({
+            message: `User ${isBlocked ? 'blocked' : 'unblocked'} successfully`,
+            user: {
+                email: user.email,
+                isBlocked: user.isBlocked
+            }
+        });
+    } catch (err) {
+        console.error('Block user error:', err);
+        res.status(500).json({ message: 'Server error blocking user' });
+    }
+});
 // adminRoute.post('/createpost', adminAuthmiddleware, async (req, res) => {
 //     try {
 //         const { title, body } = req.body;
@@ -225,5 +252,75 @@ adminRoute.delete('/deletepost', adminAuthmiddleware, async (req, res) => {
     }
 
 });
+
+adminRoute.post('/createuser', adminAuthmiddleware, async (req, res) => {
+
+    try {
+        const { name, email, password } = req.body;
+
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
+
+        //cheack for user 
+        const existingUser = await userModel.findOne({ email });
+        if (existingUser) {
+            throw new Error('User already exists');
+        }
+
+        if (!validator.isEmail(email)) {
+            throw new Error('Invalid email format');
+        }
+
+        if (password.length < 6) {
+            throw new Error('Password must be at least 6 characters');
+        }
+        //hash password 
+        const hashedPassword = await hashPassword(password);
+
+        const newUser = await userModel.create({
+            name,
+            email,
+            password: hashedPassword
+        })
+
+        res.status(201).json({
+            message: 'User created successfully',
+            user: {
+                id: newUser._id,
+                name: newUser.name,
+                email: newUser.email
+            }
+        });
+
+    } catch (err) {
+        res.status(401).json({ message: err.message });
+    }
+
+})
+
+//get stats of users like  total users, total posts
+
+adminRoute.get('/getstats', adminAuthmiddleware, async (req, res) => {
+    try {
+        const totalUsers = await userModel.countDocuments();
+        const totalPosts = await postModel.countDocuments();
+
+        res.json({
+            message: 'Stats retrieved successfully',
+            stats: {
+                totalUsers,
+                totalPosts
+            }
+        });
+    } catch (err) {
+        console.error('Get stats error:', err);
+        res.status(500).json({ message: 'Server error retrieving stats' });
+    }
+});
+
+
+
 
 module.exports = adminRoute;

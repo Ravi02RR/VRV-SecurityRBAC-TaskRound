@@ -24,8 +24,8 @@ const Signup = () => {
 
         try {
             const endpoint = isAdmin
-                ? 'http://localhost:3000/api/v1/admin/signup'
-                : 'http://localhost:3000/api/v1/user/signup';
+                ? 'https://vrv-securityrbac-taskround.onrender.com/api/v1/admin/signup'
+                : 'https://vrv-securityrbac-taskround.onrender.com/api/v1/user/signup';
 
             const response = await axios.post(endpoint, {
                 name,

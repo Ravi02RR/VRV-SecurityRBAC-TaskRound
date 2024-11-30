@@ -68,6 +68,9 @@ userRoute.post('/signin', async (req, res) => {
             throw new Error('Invalid credentials');
         }
 
+        if (user.isBlocked) {
+            throw new Error('User is blocked contact admin to login');
+        }
         //generate token
 
         const token = jwt.sign({ id: user._id }, process.env.USER_JWT, { expiresIn: '1h' });

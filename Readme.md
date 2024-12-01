@@ -2,6 +2,11 @@
 
 This project implements a Role-Based Access Control (RBAC) system for managing user roles and permissions. It consists of a client-side application and a server-side backend, both designed to work together seamlessly.
 
+## Deployment
+
+The application is deployed at the following link on AWS EC2:
+
+[VRV Security RBAC Task Round - AWS Deployment](https://vrvtask.devguy.live/)
 ## Table of Contents
 
 - [Features](#features)
@@ -126,8 +131,4 @@ Backend: https://vrv-securityrbac-taskround.onrender.com
 - **Email:** `admin@gmail.com`
 - **Password:** `admin1234`
 
-## Deployment
 
-The application is deployed at the following link:
-
-[VRV Security RBAC Task Round - AWS Deployment](https://vrvtask.devguy.live/)
